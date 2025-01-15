@@ -1,35 +1,35 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Item
-from .forms import ItemForm
+from .models import Produto
+from .forms import ProdutoForm
 
-def item_list(request):
-    items = Item.objects.all()
-    return render(request, 'CrudApp/item_list.html', {'items': items})
+def produto_list(request):
+    produtos = Produto.objects.all()
+    return render(request, 'CrudApp/produto_list.html', {'produtos': produtos})
 
-def item_create(request):
+def produto_create(request):
     if request.method == "POST":
-        form = ItemForm(request.POST)
+        form = ProdutoForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('item_list')
+            return redirect('produto_list')
     else:
-        form = ItemForm()
-    return render(request, 'CrudApp/item_form.html', {'form': form})
+        form = ProdutoForm()
+    return render(request, 'CrudApp/produto_form.html', {'form': form})
 
-def item_update(request, id):
-    item = get_object_or_404(Item, id=id)
+def produto_update(request, id):
+    produto = get_object_or_404(Produto, id=id)
     if request.method == "POST":
-        form = ItemForm(request.POST, instance=item)
+        form = ProdutoForm(request.POST, instance=produto)
         if form.is_valid():
             form.save()
-            return redirect('item_list')
+            return redirect('produto_list')
     else:
-        form = ItemForm(instance=item)
-    return render(request, 'CrudApp/item_form.html', {'form': form})
+        form = ProdutoForm(instance=produto)
+    return render(request, 'CrudApp/produto_form.html', {'form': form})
 
-def item_delete(request, id):
-    item = get_object_or_404(Item, id=id)
+def produto_delete(request, id):
+    produto = get_object_or_404(Produto, id=id)
     if request.method == "POST":
-        item.delete()
-        return redirect('item_list')
-    return render(request, 'CrudApp/item_confirm_delete.html', {'item': item})
+        produto.delete()
+        return redirect('produto_list')
+    return render(request, 'CrudApp/Confirmar_Apagar.html', {'produto': produto})

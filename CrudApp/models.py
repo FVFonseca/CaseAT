@@ -1,10 +1,10 @@
 from django.db import models
 
-from django.db import models
-
-class Item(models.Model):
-    name = models.CharField(max_length=100)
-    description = models.TextField()
+class Produto(models.Model):
+    nome = models.CharField(max_length=101)
+    preco = models.DecimalField(max_digits=10, decimal_places=2)
+    quantidade_em_estoque = models.IntegerField()
+    data_criacao = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.name
+        return self.nome
