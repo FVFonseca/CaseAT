@@ -1,35 +1,33 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse_lazy
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from .models import Produto
 from .forms import ProdutoForm
 
-def produto_list(request):
-    produtos = Produto.objects.all()
-    return render(request, 'CrudApp/produto_list.html', {'produtos': produtos})
+class ProdutoListView(ListView):
+    model = Produto
+    template_name = 'CrudApp/produto_list.html'
+    context_object_name = 'produtos'
+    
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        sort_by = self.request.GET.get('sort_by', 'nome')
+        if sort_by not in ['nome', '-nome', 'preco', '-preco']:
+            sort_by = 'nome'
+        return queryset.order_by(sort_by)
 
-def produto_create(request):
-    if request.method == "POST":
-        form = ProdutoForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('produto_list')
-    else:
-        form = ProdutoForm()
-    return render(request, 'CrudApp/produto_form.html', {'form': form})
+class ProdutoCreateView(CreateView):
+    model = Produto
+    form_class = ProdutoForm
+    template_name = 'CrudApp/produto_form.html'
+    success_url = reverse_lazy('produto_list')
 
-def produto_update(request, id):
-    produto = get_object_or_404(Produto, id=id)
-    if request.method == "POST":
-        form = ProdutoForm(request.POST, instance=produto)
-        if form.is_valid():
-            form.save()
-            return redirect('produto_list')
-    else:
-        form = ProdutoForm(instance=produto)
-    return render(request, 'CrudApp/produto_form.html', {'form': form})
+class ProdutoUpdateView(UpdateView):
+    model = Produto
+    form_class = ProdutoForm
+    template_name = 'CrudApp/produto_form.html'
+    success_url = reverse_lazy('produto_list')
 
-def produto_delete(request, id):
-    produto = get_object_or_404(Produto, id=id)
-    if request.method == "POST":
-        produto.delete()
-        return redirect('produto_list')
-    return render(request, 'CrudApp/Confirmar_Apagar.html', {'produto': produto})
+class ProdutoDeleteView(DeleteView):
+    model = Produto
+    template_name = 'CrudApp/Confirmar_Apagar.html'
+    success_url = reverse_lazy('produto_list')
